@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import AdvocateTableRow from "./components/AdvocateTableRow";
+import AdvocateTable from "./components/AdvocateTable";
 import { Advocate } from "./types";
 
 export default function Home() {
@@ -55,24 +55,7 @@ export default function Home() {
       </div>
       <br />
       <br />
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate, i) => (
-            <AdvocateTableRow key={i} advocate={advocate} />
-          ))}
-        </tbody>
-      </table>
+      <AdvocateTable advocates={filteredAdvocates} />
     </main>
   );
 }
