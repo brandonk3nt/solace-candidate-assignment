@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [advocateFilter, setAdvocateFilter] = useState("");
 
   useEffect(() => {
-    console.log("fetching advocates...");
     fetch("/api/advocates").then((response) => {
       response.json().then((jsonResponse) => {
         setAdvocates(jsonResponse.data);
@@ -18,26 +18,22 @@ export default function Home() {
 
   const onChange = (e) => {
     const searchTerm = e.target.value;
+    setAdvocateFilter(searchTerm);
 
-    document.getElementById("search-term").innerHTML = searchTerm;
-
-    console.log("filtering advocates...");
     const filteredAdvocates = advocates.filter((advocate) => {
       return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
+        advocate.firstName.toLowerCase()
+          .includes(advocateFilter.toLowerCase()) ||
+        advocate.lastName.toLowerCase()
+          .includes(advocateFilter.toLowerCase())
       );
     });
 
     setFilteredAdvocates(filteredAdvocates);
   };
 
-  const onClick = () => {
-    console.log(advocates);
+  const onResetFilter = () => {
+    setAdvocateFilter("");
     setFilteredAdvocates(advocates);
   };
 
@@ -48,11 +44,12 @@ export default function Home() {
       <br />
       <div>
         <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
+        <input
+          style={{ border: "1px solid black" }}
+          value={advocateFilter}
+          onChange={onChange}
+        />
+        <button onClick={onResetFilter}>Reset Search</button>
       </div>
       <br />
       <br />
