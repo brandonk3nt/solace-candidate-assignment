@@ -1,0 +1,12 @@
+## Work Backlog:
+- [ ] PR-1: Clean-up advocate filter.
+- [ ] PR-2: Abstract advocate component.
+- [ ] PR-3: Abstract table component.
+- [ ] PR-4: Add debounce to filter input.
+- [ ] PR-5: Update filter to query DB by name. 
+- [ ] PR-6: Add pagination to the table.
+- [ ] PR-7: Facets UI.
+- [ ] PR-8: Degree facet.
+- [ ] PR-9: City facet.
+- [ ] PR-10: Specialities facet.
+- [ ] PR-11: Experience facet.

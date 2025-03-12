@@ -1,6 +1,5 @@
 ## Solace Candidate Assignment
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+At Solace, we aim to match patients with the advocate who is best suited to their needs. To support this goal, we have a table of all of our advocates with some information about them that the patient can search on to find the best match. For this assignment, we have an initial version of this table built in a NextJS application, however it was built by an AI chimpanzee who hadn’t had his latest update yet so it’s full of bugs, bad patterns, and performance pitfalls.
 
 ## Getting Started
 

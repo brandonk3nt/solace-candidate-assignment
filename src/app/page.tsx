@@ -75,9 +75,7 @@ export default function Home() {
                 <td>{advocate.city}</td>
                 <td>{advocate.degree}</td>
                 <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
+                  {advocate.specialties.map((s) => <div>{s}</div>)}
                 </td>
                 <td>{advocate.yearsOfExperience}</td>
                 <td>{advocate.phoneNumber}</td>
