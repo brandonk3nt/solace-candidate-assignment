@@ -1,7 +1,7 @@
 ## Work Backlog:
 - [x] PR-1: Clean-up advocate filter.
 - [x] PR-2: Abstract advocate component.
-- [ ] PR-3: Abstract table component.
+- [x] PR-3: Abstract table component.
 - [ ] PR-4: Add debounce to filter input.
 - [ ] PR-5: Update filter to query DB by name. 
 - [ ] PR-6: Add pagination to the table.

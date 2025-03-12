@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { debounce } from "lodash";
+import { useEffect, useMemo, useState } from "react";
 import AdvocateTable from "./components/AdvocateTable";
 import { Advocate } from "./types";
 
@@ -18,20 +19,27 @@ export default function Home() {
     });
   }, []);
 
-  const onChange = (e) => {
-    const searchTerm = e.target.value;
+  const queryAdvocates = useMemo(
+    () =>
+      debounce((searchTerm: string) => {
+        const filteredAdvocates = advocates.filter((advocate: Advocate) => {
+          return (
+            advocate.firstName.toLowerCase()
+              .includes(searchTerm.toLowerCase()) ||
+            advocate.lastName.toLowerCase()
+              .includes(searchTerm.toLowerCase())
+          );
+        });
+
+        setFilteredAdvocates(filteredAdvocates);
+      }, 1000),
+    [advocates],
+  );
+
+  const onFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = event.target.value;
     setAdvocateFilter(searchTerm);
-
-    const filteredAdvocates = advocates.filter((advocate: Advocate) => {
-      return (
-        advocate.firstName.toLowerCase()
-          .includes(advocateFilter.toLowerCase()) ||
-        advocate.lastName.toLowerCase()
-          .includes(advocateFilter.toLowerCase())
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    queryAdvocates(searchTerm);
   };
 
   const onResetFilter = () => {
@@ -49,7 +57,7 @@ export default function Home() {
         <input
           style={{ border: "1px solid black" }}
           value={advocateFilter}
-          onChange={onChange}
+          onChange={onFilterChange}
         />
         <button onClick={onResetFilter}>Reset Search</button>
       </div>
