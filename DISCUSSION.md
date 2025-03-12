@@ -1,5 +1,5 @@
 ## Work Backlog:
-- [ ] PR-1: Clean-up advocate filter.
+- [x] PR-1: Clean-up advocate filter.
 - [ ] PR-2: Abstract advocate component.
 - [ ] PR-3: Abstract table component.
 - [ ] PR-4: Add debounce to filter input.
