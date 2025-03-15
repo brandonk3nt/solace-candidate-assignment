@@ -38,3 +38,5 @@ npx drizzle-kit push
 ```bash
 curl -X POST http://localhost:3000/api/seed
 ```
+
+Connection string: `postgresql://postgres:password@localhost:5432/solaceassignment`
