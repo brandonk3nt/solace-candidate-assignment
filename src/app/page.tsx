@@ -1,69 +1,89 @@
 "use client";
 
 import { debounce } from "lodash";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AdvocateTable from "./components/AdvocateTable";
-import { Advocate } from "./types";
+import { Advocate, AdvocateParams } from "./types";
+
+/**
+ * TODO:
+ * [x] Comment out all code we might axe
+ * [x] Get it working for the initial query in useEffect
+ * [x] Get it working onChange of input with useRef
+ * [x] Query params builder fn
+ * [x] Update the query in api/routes.ts
+ */
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
   const [advocateFilter, setAdvocateFilter] = useState("");
+  const hasFetched = useRef(false);
 
-  useEffect(() => {
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
+  const getQueryParams = useCallback((searchTerm?: string) => {
+    const queryParams = new URLSearchParams();
+
+    if (searchTerm) {
+      queryParams.set("name", searchTerm);
+    }
+
+    return queryParams.toString();
   }, []);
 
-  const queryAdvocates = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        const filteredAdvocates = advocates.filter((advocate: Advocate) => {
-          return (
-            advocate.firstName.toLowerCase()
-              .includes(searchTerm.toLowerCase()) ||
-            advocate.lastName.toLowerCase()
-              .includes(searchTerm.toLowerCase())
-          );
-        });
+  const getAdvocates = useCallback(async (searchTerm?: string) => {
+    const queryString = `/api/advocates?${getQueryParams(searchTerm)}`;
+    const response = await fetch(queryString);
+    const { data } = await response.json();
+    setAdvocates(data);
+  }, [getQueryParams]);
 
-        setFilteredAdvocates(filteredAdvocates);
-      }, 1000),
-    [advocates],
+  const debounceInputRef = useRef(
+    debounce((searchTerm?: string) => getAdvocates(searchTerm), 1000),
   );
 
   const onFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value;
     setAdvocateFilter(searchTerm);
-    queryAdvocates(searchTerm);
+    debounceInputRef.current(searchTerm);
   };
 
   const onResetFilter = () => {
     setAdvocateFilter("");
-    setFilteredAdvocates(advocates);
+    getAdvocates();
   };
 
+  useEffect(function initPageData() {
+    if (!hasFetched.current) {
+      hasFetched.current = true;
+      getAdvocates();
+    }
+  }, [getAdvocates]);
+
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
+    <main className="p-8">
+      <h1 className="mb-8 text-center font-bold text-xl">Solace Advocates</h1>
+      <div className="mb-8">
+        <p>Search By Name:</p>
         <input
-          style={{ border: "1px solid black" }}
+          className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           value={advocateFilter}
           onChange={onFilterChange}
         />
-        <button onClick={onResetFilter}>Reset Search</button>
+        {
+          /* {specialties?.length > 0 &&
+          specialties.map((specialty) => <div key={specialty}>{specialty}
+          </div>)} */
+        }
+        <button
+          className="ml-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded hover:bg-emerald-100"
+          onClick={onResetFilter}
+        >
+          Clear
+        </button>
       </div>
-      <br />
-      <br />
-      <AdvocateTable advocates={filteredAdvocates} />
+      {advocates?.length > 0 &&
+        <AdvocateTable advocates={advocates} />}
+      {(!advocates || !advocates.length) &&
+        <h1>No advocates found</h1>}
     </main>
   );
 }

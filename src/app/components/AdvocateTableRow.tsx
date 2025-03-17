@@ -6,7 +6,7 @@ type AdvocateTableRowProps = {
 
 export default function AdvocateTableRow({ advocate }: AdvocateTableRowProps) {
   return (
-    <tr>
+    <tr className="even:bg-emerald-100 odd:bg-white">
       <td>{advocate.firstName}</td>
       <td>{advocate.lastName}</td>
       <td>{advocate.city}</td>

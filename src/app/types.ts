@@ -7,3 +7,7 @@ export type Advocate = {
   yearsOfExperience: number;
   phoneNumber: number;
 };
+
+export type AdvocateParams = {
+  name?: string;
+};
