@@ -10,7 +10,7 @@ import { Advocate, AdvocateParams } from "./types";
  * [x] Comment out all code we might axe
  * [x] Get it working for the initial query in useEffect
  * [x] Get it working onChange of input with useRef
- * [ ] Query params builder fn
+ * [x] Query params builder fn
  * [ ] Update the query in api/routes.ts
  */
 
@@ -19,28 +19,31 @@ export default function Home() {
   const [advocateFilter, setAdvocateFilter] = useState("");
   const hasFetched = useRef(false);
 
-  const getQueryParams = useCallback(() => {
+  const getQueryParams = useCallback((searchTerm?: string) => {
     const queryParams = new URLSearchParams();
 
-    if (advocateFilter.length) {
-      queryParams.set("name", advocateFilter);
+    if (searchTerm) {
+      queryParams.set("name", searchTerm);
     }
 
     return queryParams.toString();
-  }, [advocateFilter]);
+  }, []);
 
-  const getAdvocates = useCallback(async () => {
-    const response = await fetch(`/api/advocates?${getQueryParams()}`);
+  const getAdvocates = useCallback(async (searchTerm?: string) => {
+    const queryString = `/api/advocates?${getQueryParams(searchTerm)}`;
+    const response = await fetch(queryString);
     const { data } = await response.json();
     setAdvocates(data);
   }, [getQueryParams]);
 
-  const debounceInputRef = useRef(debounce(() => getAdvocates(), 1000));
+  const debounceInputRef = useRef(
+    debounce((searchTerm?: string) => getAdvocates(searchTerm), 1000),
+  );
 
   const onFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value;
     setAdvocateFilter(searchTerm);
-    debounceInputRef.current();
+    debounceInputRef.current(searchTerm);
   };
 
   const onResetFilter = () => {
@@ -67,11 +70,13 @@ export default function Home() {
           value={advocateFilter}
           onChange={onFilterChange}
         />
-        <button onClick={onResetFilter}>Reset Search</button>
+        <button onClick={onResetFilter}>Clear</button>
       </div>
       <br />
       <br />
-      <AdvocateTable advocates={advocates} />
+      {advocates?.length > 0 &&
+        <AdvocateTable advocates={advocates} />}
+      {!advocates?.length && <h1>No advocates found from query</h1>}
     </main>
   );
 }
