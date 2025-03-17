@@ -8,24 +8,19 @@ export default function Home() {
   const [advocates, setAdvocates] = useState([]);
   const [specialtiesFilter, setSpecialtiesFilter] = useState({});
   const [advocateFilter, setAdvocateFilter] = useState("");
-  const hasFetched = useRef(false);
 
-  const getQueryParams = useCallback((searchTerm?: string) => {
+  const getAdvocates = useCallback(async () => {
     const queryParams = new URLSearchParams();
 
-    if (searchTerm) {
-      queryParams.set("name", searchTerm);
+    if (advocateFilter) {
+      queryParams.set("name", advocateFilter);
     }
 
-    return queryParams.toString();
-  }, []);
-
-  const getAdvocates = useCallback(async (searchTerm?: string) => {
-    const queryString = `/api/advocates?${getQueryParams(searchTerm)}`;
+    const queryString = `/api/advocates?${queryParams.toString()}`;
     const response = await fetch(queryString);
     const { data } = await response.json();
     setAdvocates(data);
-  }, [getQueryParams]);
+  }, [advocateFilter]);
 
   const getSpecialties = useCallback(async () => {
     const response = await fetch(`/api/specialties`);
@@ -34,18 +29,16 @@ export default function Home() {
       result[item] = false;
       return result;
     }, {});
-    console.log(specialtiesState);
     setSpecialtiesFilter(specialtiesState);
   }, []);
 
   const debounceInputRef = useRef(
-    debounce((searchTerm?: string) => getAdvocates(searchTerm), 1000),
+    debounce(() => getAdvocates(), 1000),
   );
 
   const onFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value;
     setAdvocateFilter(searchTerm);
-    debounceInputRef.current(searchTerm);
   };
 
   const onResetFilter = () => {
@@ -53,7 +46,7 @@ export default function Home() {
     getAdvocates();
   };
 
-  const onSpecialtyUpdated = (event) => {
+  const onSpecialtyChange = (event) => {
     const specialty = event.target.name;
     setSpecialtiesFilter({
       ...specialtiesFilter,
@@ -62,12 +55,17 @@ export default function Home() {
   };
 
   useEffect(function initPageData() {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
-      getAdvocates();
-      getSpecialties();
-    }
+    getAdvocates();
+    getSpecialties();
+  }, [getAdvocates, getSpecialties]);
+
+  useEffect(() => {
+    debounceInputRef.current = debounce(() => getAdvocates(), 1000);
   }, [getAdvocates]);
+
+  useEffect(function queryAdvocates() {
+    debounceInputRef.current();
+  }, [specialtiesFilter, advocateFilter]);
 
   return (
     <main className="p-8">
@@ -95,7 +93,7 @@ export default function Home() {
                 <div key={specialty}>
                   <input
                     checked={specialtiesFilter[specialty]}
-                    onChange={onSpecialtyUpdated}
+                    onChange={onSpecialtyChange}
                     type="checkbox"
                     id="scales"
                     name={specialty}
