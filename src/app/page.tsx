@@ -52,7 +52,10 @@ export default function Home() {
     if (!hasFetched.current) {
       hasFetched.current = true;
       getAdvocates();
+<<<<<<< HEAD
       getSpecialties();
+=======
+>>>>>>> master
     }
   }, [getAdvocates]);
 
