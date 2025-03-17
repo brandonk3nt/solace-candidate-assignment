@@ -76,7 +76,8 @@ export default function Home() {
       <br />
       {advocates?.length > 0 &&
         <AdvocateTable advocates={advocates} />}
-      {!advocates?.length && <h1>No advocates found from query</h1>}
+      {(!advocates || !advocates.length) &&
+        <h1>No advocates found</h1>}
     </main>
   );
 }
