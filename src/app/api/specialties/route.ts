@@ -7,7 +7,7 @@ export async function GET() {
     const response = await db.select().from(advocates);
     response.forEach((advocateObj) =>
       advocateObj.specialties.forEach((specialty) => {
-        if (specialtiesList.indexOf(specialty) !== -1) {
+        if (specialtiesList.indexOf(specialty) === -1) {
           specialtiesList.push(specialty);
         }
       })
