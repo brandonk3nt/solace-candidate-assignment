@@ -3,19 +3,10 @@
 import { debounce } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AdvocateTable from "./components/AdvocateTable";
-import { Advocate, AdvocateParams } from "./types";
-
-/**
- * TODO:
- * [x] Comment out all code we might axe
- * [x] Get it working for the initial query in useEffect
- * [x] Get it working onChange of input with useRef
- * [x] Query params builder fn
- * [x] Update the query in api/routes.ts
- */
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
+  const [specialties, setSpecialties] = useState([]);
   const [advocateFilter, setAdvocateFilter] = useState("");
   const hasFetched = useRef(false);
 
@@ -36,6 +27,12 @@ export default function Home() {
     setAdvocates(data);
   }, [getQueryParams]);
 
+  const getSpecialties = useCallback(async () => {
+    const response = await fetch(`/api/specialties`);
+    const { data } = await response.json();
+    setSpecialties(data);
+  }, []);
+
   const debounceInputRef = useRef(
     debounce((searchTerm?: string) => getAdvocates(searchTerm), 1000),
   );
@@ -55,6 +52,7 @@ export default function Home() {
     if (!hasFetched.current) {
       hasFetched.current = true;
       getAdvocates();
+      getSpecialties();
     }
   }, [getAdvocates]);
 
