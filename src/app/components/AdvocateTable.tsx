@@ -20,7 +20,9 @@ export default function AdvocateTable({ advocates }: AdvocateTableProps) {
     <table>
       <thead>
         <tr>
-          {headerLabels.map((header, i) => <th key={i}>{header}</th>)}
+          {headerLabels.map((header, i) => (
+            <th key={i} className="pb-4">{header}</th>
+          ))}
         </tr>
       </thead>
       <tbody>

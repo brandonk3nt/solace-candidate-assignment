@@ -11,7 +11,7 @@ import { Advocate, AdvocateParams } from "./types";
  * [x] Get it working for the initial query in useEffect
  * [x] Get it working onChange of input with useRef
  * [x] Query params builder fn
- * [ ] Update the query in api/routes.ts
+ * [x] Update the query in api/routes.ts
  */
 
 export default function Home() {
@@ -59,21 +59,27 @@ export default function Home() {
   }, [getAdvocates]);
 
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
+    <main className="p-8">
+      <h1 className="mb-8 text-center font-bold text-xl">Solace Advocates</h1>
+      <div className="mb-8">
+        <p>Search By Name:</p>
         <input
-          style={{ border: "1px solid black" }}
+          className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           value={advocateFilter}
           onChange={onFilterChange}
         />
-        <button onClick={onResetFilter}>Clear</button>
+        {
+          /* {specialties?.length > 0 &&
+          specialties.map((specialty) => <div key={specialty}>{specialty}
+          </div>)} */
+        }
+        <button
+          className="ml-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded hover:bg-emerald-100"
+          onClick={onResetFilter}
+        >
+          Clear
+        </button>
       </div>
-      <br />
-      <br />
       {advocates?.length > 0 &&
         <AdvocateTable advocates={advocates} />}
       {(!advocates || !advocates.length) &&
