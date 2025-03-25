@@ -7,9 +7,11 @@ import AdvocateTable from "./components/AdvocateTable";
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
   const [specialtiesFilter, setSpecialtiesFilter] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const [advocateFilter, setAdvocateFilter] = useState("");
 
   const getAdvocates = useCallback(async () => {
+    setIsLoading(true);
     const queryParams = new URLSearchParams();
 
     if (advocateFilter) {
@@ -20,6 +22,7 @@ export default function Home() {
     const response = await fetch(queryString);
     const { data } = await response.json();
     setAdvocates(data);
+    setIsLoading(false);
   }, [advocateFilter]);
 
   const getSpecialties = useCallback(async () => {
@@ -103,9 +106,10 @@ export default function Home() {
               ))}
           </div>
         </div>
-        {advocates?.length > 0 &&
+        {isLoading && "Loading data..."}
+        {advocates?.length > 0 && !isLoading &&
           <AdvocateTable advocates={advocates} />}
-        {(!advocates || !advocates.length) &&
+        {advocates?.length === 0 && !isLoading &&
           <h1>No advocates found</h1>}
       </div>
     </main>
