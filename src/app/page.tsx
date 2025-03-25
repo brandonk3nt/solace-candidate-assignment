@@ -15,7 +15,8 @@ import { Advocate, AdvocateParams } from "./types";
  */
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [advocates, setAdvocates] = useState(null);
   const [advocateFilter, setAdvocateFilter] = useState("");
   const hasFetched = useRef(false);
 
@@ -30,10 +31,12 @@ export default function Home() {
   }, []);
 
   const getAdvocates = useCallback(async (searchTerm?: string) => {
+    setIsLoading(true);
     const queryString = `/api/advocates?${getQueryParams(searchTerm)}`;
     const response = await fetch(queryString);
     const { data } = await response.json();
     setAdvocates(data);
+    setIsLoading(false);
   }, [getQueryParams]);
 
   const debounceInputRef = useRef(
@@ -80,9 +83,10 @@ export default function Home() {
           Clear
         </button>
       </div>
-      {advocates?.length > 0 &&
+      {isLoading && "Loading data..."}
+      {advocates?.length > 0 && !isLoading &&
         <AdvocateTable advocates={advocates} />}
-      {(!advocates || !advocates.length) &&
+      {advocates?.length === 0 && !isLoading &&
         <h1>No advocates found</h1>}
     </main>
   );
