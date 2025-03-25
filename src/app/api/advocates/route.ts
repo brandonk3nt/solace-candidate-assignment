@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import db from "../../../db";
 import { advocates } from "../../../db/schema";
-import { ilike, or } from "drizzle-orm";
+import { ilike, or, and } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -17,7 +17,17 @@ export async function GET(req: NextRequest) {
         .where(
           or(
             ilike(advocates.firstName, `%${params.name}%`),
-            ilike(advocates.lastName, `%${params.name}%`)
+            ilike(advocates.lastName, `%${params.name}%`),
+            and(
+              or(
+                ilike(advocates.firstName, `%${params.name.split(" ")[0]}%`),
+                ilike(advocates.lastName, `%${params.name.split(" ")[0]}%`)
+              ),
+              or(
+                ilike(advocates.firstName, `%${params.name.split(" ")[1]}%`),
+                ilike(advocates.lastName, `%${params.name.split(" ")[1]}%`)
+              )
+            )
           )
         );
     } else {
